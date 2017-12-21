@@ -2,6 +2,7 @@
 	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
+	transition: color 2s, background-image 2s;
 }
 
 html {
@@ -50,7 +51,7 @@ h1 {
 	margin-bottom: 40vw;
 }
 
-@media(min-width: 500px) {
+@media(min-width: 100px) {
 	html {
 		font-size: 0.8em;
 	}
