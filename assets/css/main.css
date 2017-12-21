@@ -12,6 +12,9 @@ body {
 	background-image: linear-gradient(#FFF, rgba(200, 255, 200, 1));
 	background-attachment: fixed;
 	background-size: 100vw 100vh;
+	background-repeat: repeat-x;
+	background-position: top left;
+	background-color: rgba(200, 255, 200, 1);
 }
 
 main {
