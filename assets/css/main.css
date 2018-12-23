@@ -24,7 +24,6 @@ body {
 
 main {
   padding: 3em;
-  margin: 10vw;
   border: solid 1em #43C7DB;
   background-color: white;
   box-shadow: rgba(0, 0, 200, 0.05) 1em 1em 0px;
@@ -36,55 +35,85 @@ main {
   background-size: 100%;
 }
 
-nav {
-    font-size: 0.8em;
-    transform: rotate(-2deg);
-    margin-left: -6em;
-    background: linear-gradient(90deg, #43C7DB, #C3B2E7);
-    padding: 1em;
-    box-shadow: rgba(0, 0, 200, 0.05) 0.5em 0.5em 0px;
-    overflow: hidden;
+nav.top {
+  font-size: 0.8em;
+  transform: rotate(-2deg);
+  margin-left: -6em;
+  background: linear-gradient(90deg, #43C7DB, #C3B2E7);
+  padding: 1em;
+  box-shadow: rgba(0, 0, 200, 0.05) 0.5em 0.5em 0px;
+  overflow: hidden;
 }
 
-nav:after {
-    content: " ";
-    display: block;
-    position: absolute;
-    width: 100%;
-    height: 2em;
-    background: linear-gradient(90deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));
-    margin-left: -1em;
-    margin-top: 0.5em;
-    transform: rotate(1deg);
+nav:not(.top) {
+  margin-bottom: 3em;
+  border-bottom: solid #43C7DB 1px;
+  margin-left: -3em;
+  margin-right: -3em;
+  padding-left: 3em;
+  padding-top: 1em;
+  background-color: white;
+}
+
+nav.top:after {
+  content: " ";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 2em;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));
+  margin-left: -1em;
+  margin-top: 0.5em;
+  transform: rotate(1deg);
 }
 
 nav ul {
-    list-style-type: none;
-    padding: 0px;
-    margin: 0px;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-content: flex-start;
+  list-style-type: none;
+  padding: 0px;
+  margin: 0px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: flex-start;
 }
 
 nav ul li {
-    flex-grow: 1;
-    padding: 0px;
-    display: block;
-    margin: 0px;
+  flex-grow: 1;
+  padding: 0px;
+  display: block;
+  margin: 0px;
 }
 
 nav a {
-    color: #FFF790;
-    text-decoration: none;
-    padding: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #43C7DB;
+  padding-left: 1em;
+  padding-right: 1em;
+  padding-top: 0.5em;
 }
 
-nav li a:hover {
-    color: white;
-    border-bottom: solid 3px white;
-    text-shadow: white 0px 0px 2px;
+nav:not(.top) a:hover {
+  border-bottom: solid #43C7DB 0.5em;
+}
+
+nav:not(.top) li.current a {
+  background-color: #43C7DB;
+  color: white;
+  border-bottom: solid #43C7DB 0.5em;
+}
+
+nav.top a {
+  color: #FFF790;
+  text-decoration: none;
+  padding: 0.2em;
+  text-transform: none;
+}
+
+nav.top li a:hover {
+  color: white;
+  border-bottom: solid 3px white;
+  text-shadow: white 0px 0px 2px;
 }
 
 h1, h2, h3, h4, h5, p {
@@ -93,7 +122,7 @@ h1, h2, h3, h4, h5, p {
 
 h1 {
   font-weight: bold;
-  font-size: 4em;
+  font-size: 3em;
   text-shadow: lavender 5px 5px 0px;
   transform: rotate(-1deg);
   transition: transform 1s;
@@ -112,7 +141,7 @@ html {
 
 @media(min-width: 100px) {
   h1 {
-    font-size: 2.5em;
+    font-size: 2em;
     margin-bottom: 50vw;
   }
 
@@ -123,10 +152,6 @@ html {
 }
 
 @media(min-width: 600px) {
-  h1 {
-    font-size: 3em;
-  }
-
   main {
     margin: 7vw;
     background-position: 0px 150px;
@@ -135,24 +160,25 @@ html {
 
 @media(min-width: 700px) {
   h1 {
-     font-size: 4em;
+     font-size: 3em;
   }
 
   main {
     margin: 9vw;
+    margin-top: 63px;
     background-position: 0px 170px;
   }
 }
 
-@media(min-width: 1000px) {
+@media(min-width: 861px) {
   h1 {
     margin-bottom: 400px;
-    font-size: 5em;
+    font-size: 4em;
   }
 
   main {
-    margin: 10vw;
     background-position: 0px 200px;
+    margin-top: 73px !important;
   }
 }
 
