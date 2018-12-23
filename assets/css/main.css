@@ -52,7 +52,6 @@ nav:not(.top) {
   margin-right: -3em;
   padding-left: 3em;
   padding-top: 1em;
-  background-color: white;
 }
 
 nav.top:after {
