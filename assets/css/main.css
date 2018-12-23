@@ -9,6 +9,10 @@ a, a *, h1, h1 * {
   transition: none;
 }
 
+a {
+  color: #43C7DB;
+}
+
 html {
   font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
@@ -50,7 +54,7 @@ nav:not(.top) {
   border-bottom: solid #43C7DB 1px;
   margin-left: -3em;
   margin-right: -3em;
-  padding-left: 3em;
+  padding-left: 1.6em;
   padding-top: 1em;
 }
 
