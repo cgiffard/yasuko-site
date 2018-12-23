@@ -1,171 +1,171 @@
 * {
-	box-sizing: border-box;
-	margin: 0;
-	padding: 0;
-	transition: color 2s, background-image 2s;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  transition: color 2s, background-image 2s;
 }
 
 html {
-	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 
 body {
-	background-image: linear-gradient(#E1F0F5, #F8F7D9);
-	background-attachment: fixed;
-	background-size: 100vw 100vh;
-	background-repeat: repeat-x;
-	background-position: top left;
-	background-color: #F8F7D9;
+  background-image: linear-gradient(#E1F0F5, #F8F7D9);
+  background-attachment: fixed;
+  background-size: 100vw 100vh;
+  background-repeat: repeat-x;
+  background-position: top left;
+  background-color: #F8F7D9;
 }
 
 main {
-	padding: 3em;
-	margin: 10vw;
-	border: solid 1em #43C7DB;
-	background-color: white;
-	box-shadow: rgba(0, 0, 200, 0.05) 1em 1em 0px;
-	max-width: 700px;
+  padding: 3em;
+  margin: 10vw;
+  border: solid 1em #43C7DB;
+  background-color: white;
+  box-shadow: rgba(0, 0, 200, 0.05) 1em 1em 0px;
+  max-width: 700px;
 
-	background-image: url("../images/site/background.jpg");
-	background-repeat: no-repeat;
-	background-position: 0px 200px;
-	background-size: 100%;
+  background-image: url("../images/site/background.jpg");
+  background-repeat: no-repeat;
+  background-position: 0px 200px;
+  background-size: 100%;
 }
 
 h1, h2, h3, h4, h5, p {
-	margin-bottom: 1em;
+  margin-bottom: 1em;
 }
 
 h1 {
-	font-weight: bold;
-	font-size: 4em;
-	text-shadow: lavender 5px 5px 0px;
-	transform: rotate(-1deg);
-	transition: transform 1s;
-	margin-left: -2em;
+  font-weight: bold;
+  font-size: 4em;
+  text-shadow: lavender 5px 5px 0px;
+  transform: rotate(-1deg);
+  transition: transform 1s;
+  margin-left: -2em;
 
-	background-color: white;
-	padding: 0.3em;
-	box-shadow: rgba(0, 0, 200, 0.05) 0.2em 0.2em 0px;
+  background-color: white;
+  padding: 0.3em;
+  box-shadow: rgba(0, 0, 200, 0.05) 0.2em 0.2em 0px;
 
-	margin-bottom: 40vw;
+  margin-bottom: 40vw;
+}
+
+html {
+    font-size: 0.7em;
 }
 
 @media(min-width: 100px) {
-	html {
-		font-size: 0.8em;
-	}
+  h1 {
+    font-size: 2.5em;
+    margin-bottom: 50vw;
+  }
 
-	h1 {
-		font-size: 2.5em;
-		margin-bottom: 50vw;
-	}
-
-	main {
-		margin: 5vw;
-		background-position: 0px 100px;
-	}
+  main {
+    margin: 5vw;
+    background-position: 0px 100px;
+  }
 }
 
 @media(min-width: 600px) {
-	html {
-		font-size: 0.9em;
-	}
+  h1 {
+    font-size: 3em;
+  }
 
-	h1 {
-		font-size: 3em;
-	}
-
-	main {
-		margin: 7vw;
-		background-position: 0px 150px;
-	}
+  main {
+    margin: 7vw;
+    background-position: 0px 150px;
+  }
 }
 
 @media(min-width: 700px) {
-	html {
-		font-size: 1em;
-	}
+  h1 {
+     font-size: 4em;
+  }
 
-	main {
-		margin: 9vw;
-		background-position: 0px 170px;
-	}
+  main {
+    margin: 9vw;
+    background-position: 0px 170px;
+  }
 }
 
 @media(min-width: 1000px) {
-	h1 {
-		margin-bottom: 400px;
-		font-size: 4em;
-	}
+  h1 {
+    margin-bottom: 400px;
+    font-size: 5em;
+  }
 
-	main {
-		margin: 10vw;
-		background-position: 0px 200px;
-	}
+  main {
+    margin: 10vw;
+    background-position: 0px 200px;
+  }
 }
 
 h1 span {
-	color: #666;
-	word-break: keep-all;
+  color: #666;
+  word-break: keep-all;
 }
 
 h2 {
-	color: #60DDC5;
-	text-transform: uppercase;
-	letter-spacing: 0.1em;
-	font-weight: normal;
-	border-bottom: dashed #60DDC5 1px;
-	padding-bottom: 0.1em;
-	clear: both;
+  color: #60DDC5;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: normal;
+  border-bottom: dashed #60DDC5 1px;
+  padding-bottom: 0.1em;
+  clear: both;
 }
 
-p, li {
-	margin-bottom: 2em;
-	line-height: 2;
-	font-size: 1.3em;
+p, ul {
+  margin-bottom: 2em;
+  line-height: 2;
+  font-size: 1.3em;
 }
 
 ul {
-	list-style-type: none;
+  list-style-type: none;
 }
 
 li {
-	padding-left: 2.5em;
+  padding-left: 3em;
+  padding-bottom: 1em;
+}
+
+li strong {
+  display: inline-block;
+  text-align: left;
+  width: 3em;
+  margin-left: -3em;
 }
 
 dt {
-	text-transform: uppercase;
-	color: #999;
-	min-width: 50%;
-	float: left;
-	clear: left;
-	padding-bottom: 1em;
+  text-transform: uppercase;
+  color: #999;
+  min-width: 50%;
+  float: left;
+  clear: left;
+  padding-bottom: 1em;
 }
 
 dd {
-	min-width: 50%;
-	float: right;
-	clear: right;
-	padding-bottom: 1em;
+  min-width: 50%;
+  float: right;
+  clear: right;
+  padding-bottom: 1em;
 }
 
 dl {
-	overflow: hidden;
-}
-
-li:first-letter {
-	margin-left: -2.5em;
+  overflow: hidden;
 }
 
 img.wrap {
-	float: right;
-	clear: right;
-	width: 50%;
+  float: right;
+  clear: right;
+  width: 50%;
 }
 
 image.wrap-alternate {
-	float: left;
-	clear: left;
-	width: 50%;
+  float: left;
+  clear: left;
+  width: 50%;
 }
