@@ -5,6 +5,10 @@
   transition: color 2s, background-image 2s;
 }
 
+a, a *, h1, h1 * {
+  transition: none;
+}
+
 html {
   font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
@@ -30,6 +34,57 @@ main {
   background-repeat: no-repeat;
   background-position: 0px 200px;
   background-size: 100%;
+}
+
+nav {
+    font-size: 0.8em;
+    transform: rotate(-2deg);
+    margin-left: -6em;
+    background: linear-gradient(90deg, #43C7DB, #C3B2E7);
+    padding: 1em;
+    box-shadow: rgba(0, 0, 200, 0.05) 0.5em 0.5em 0px;
+    overflow: hidden;
+}
+
+nav:after {
+    content: " ";
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 2em;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));
+    margin-left: -1em;
+    margin-top: 0.5em;
+    transform: rotate(1deg);
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0px;
+    margin: 0px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+}
+
+nav ul li {
+    flex-grow: 1;
+    padding: 0px;
+    display: block;
+    margin: 0px;
+}
+
+nav a {
+    color: #FFF790;
+    text-decoration: none;
+    padding: 0.2em;
+}
+
+nav li a:hover {
+    color: white;
+    border-bottom: solid 3px white;
+    text-shadow: white 0px 0px 2px;
 }
 
 h1, h2, h3, h4, h5, p {
