@@ -1,0 +1,138 @@
+* {
+	box-sizing: border-box;
+}
+
+html {
+	font-family: 'Helvetica Neue', sans-serif;
+}
+
+header {
+/* 	perspective: 1000px; */
+	text-align: center;
+	width: 100%;
+	height: 100vh;
+}
+
+header h1 {
+/* 	transform: rotateX(60deg); */
+	width: 100%;
+/* 	transform-style: preserve-3d; */
+/* 	transform-origin: 50% 50%; */
+	text-indent: -27pt;
+	
+	line-height: 100vh;
+	margin: 0px;
+	padding: 0px;
+	font-weight: lighter;
+	text-transform-uppercase;
+	letter-spacing: 0.4em;
+	position: absolute;
+	font-size: 7vw;
+	width: 100%;
+	text-indent: 0.5em;
+	color: white !important;
+	text-shadow: black 0px 0px 100px;
+	z-index: 10;
+}
+
+header h1 .lighter {
+	text-shadow: white 0px 0px 1px,
+	             white 0px 0px 2px,
+	             white 0px 0px 3px,
+	             white 0px 0px 10px,
+	             white 0px 0px 10px;
+}
+
+body {
+	margin: 0px;
+	background-repeat: no-repeat;
+	background-color: #E1F0F5;
+}
+
+canvas {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+
+nav {
+	position: absolute;
+	z-index: 10;
+	margin-top: -10vh;
+	background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4));
+	height: 10vh;
+	width: 100vw;
+	line-height: 10vh;
+	padding: 0 10vw;
+	box-shadow: black 0px 0px 100px;
+}
+
+nav li, nav ul {
+	display: block;
+	width: 100%;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+nav ul {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-content: flex-start;
+}
+
+nav li {
+	flex: 1;
+	text-align: center;
+}
+
+nav a {
+	color: white;
+	text-transform: uppercase;
+	text-decoration: none;
+	font-size: smaller;
+}
+
+nav li:hover a::before {
+	content: " ";
+	display: block;
+	position: absolute;
+	width: 12vw;
+	height: 10vh;
+	top: -10vh;
+	background-position: center center;
+	background-size: contain;
+	background-repeat: no-repeat;
+}
+
+nav li.profile:hover a::before {
+	background-image: url("sprites/e.gif");
+}
+
+nav li.work:hover a::before {
+	background-image: url("sprites/f.gif");
+}
+
+nav li.illustration:hover a::before {
+	background-image: url("sprites/a.gif");
+}
+
+nav li.line:hover a::before {
+	background-image: url("sprites/b.gif");
+}
+
+nav li.goods:hover a::before {
+	background-image: url("sprites/g.gif");
+}
+
+
+nav li.blog:hover a::before {
+	background-image: url("sprites/c.gif");
+}
+
+nav li.contact:hover a::before {
+	background-image: url("sprites/d.gif");
+}
