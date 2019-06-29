@@ -379,4 +379,8 @@ window.addEventListener("scroll", function() {
   } else {
     document.body.classList.remove("nav-fixed");
   }
-})
+});
+
+window.addEventListener("load", function() {
+  document.body.classList.add("loaded");
+});

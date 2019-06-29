@@ -60,12 +60,6 @@ header h1 {
 	
 	color: white;
 	text-shadow: black 0px 0px 100px;
-	
-	/* Modesty? Who knows. */
-  animation-duration: 7s;
-  animation-name: fadeOutTitle;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
 }
 
 header h1 .lighter {
@@ -74,6 +68,14 @@ header h1 .lighter {
 	             white 0px 0px 3px,
 	             white 0px 0px 10px,
 	             white 0px 0px 10px;
+}
+
+.loaded header h1 {
+	/* Modesty? Who knows. */
+  animation-duration: 7s;
+  animation-name: fadeOutTitle;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
 }
 
 @keyframes fadeOutTitle {
