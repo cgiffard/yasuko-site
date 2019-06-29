@@ -70,7 +70,7 @@ header h1 .lighter {
 	             white 0px 0px 10px;
 }
 
-.loaded header h1 {
+.loaded.textures-loaded header h1 {
 	/* Modesty? Who knows. */
   animation-duration: 7s;
   animation-name: fadeOutTitle;
