@@ -94,7 +94,7 @@ function resize() {
 
 // Thanks, https://math.stackexchange.com/questions/121720/ease-in-out-function
 function quadraticEase(time, maxTime) {
-  const easingSharpness = 3;
+  const easingSharpness = 4;
   const progress = time / maxTime;
   
   if (time >= maxTime) {
@@ -108,10 +108,15 @@ function quadraticEase(time, maxTime) {
 }
 
 function animate(time = 0) {
+	requestAnimationFrame(animate);
+	
 	/* Colour change */
 	animateBG(time);
-
-	requestAnimationFrame(animate);
+	
+	/* Bail out if we know the box isn't visible */
+	if (document.body.scrollTop > window.innerHeight * 1.5) {
+  	return;
+	}
 
 	camera.rotateOnWorldAxis(new THREE.Vector3(0, 0.4, 1).normalize(), rad(0.2));
 
@@ -351,14 +356,27 @@ function animateBG(time = 0) {
   
   const newKeyColourRGB =
         `rgb(${newKeyColour[0]}, ${newKeyColour[1]}, ${newKeyColour[2]})`;
-
-  document.body.style.setProperty("--foreground-color", newForegroundRGB);
-  document.body.style.setProperty("--background-color", newBackgroundRGB);
-  document.body.style.setProperty("--key-color", newKeyColourRGB);
   
   boxMaterial.color.setRGB(...newKeyColour.map((i) => i / 255));
   lights[0].color.setRGB(...newBackground.map((i) => i / 255))
   lights[1].color.setRGB(...newForeground.map((i) => i / 255))
   scene.fog.color.setRGB(...newForeground.map((i) => i / 255));
   spriteScene.fog.color.setRGB(...newForeground.map((i) => i / 255));
+
+  // Finally, do the expensive DOM stuff at once.
+  document.body.style.setProperty("--foreground-color", newForegroundRGB);
+  document.body.style.setProperty("--background-color", newBackgroundRGB);
+  document.body.style.setProperty("--key-color", newKeyColourRGB);
 }
+
+
+// Handle scrolling
+window.addEventListener("scroll", function() {
+  if (window.innerWidth < 700) { return; }
+
+  if ((document.body.scrollTop || window.scrollY) > (window.innerHeight * 0.9)) {
+    document.body.classList.add("nav-fixed");
+  } else {
+    document.body.classList.remove("nav-fixed");
+  }
+})
