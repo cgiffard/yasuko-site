@@ -12,13 +12,13 @@ body {
   --key-color: #FF00FF;
  
   /* Sprite images */
-  --image-profile:      url("sprites/e.gif");
-  --image-work:         url("sprites/f.gif");
-  --image-illustration: url("sprites/a.gif");
-  --image-line:         url("sprites/b.gif");
-  --image-goods:        url("sprites/g.gif");
-  --image-blog:         url("sprites/c.gif");
-  --image-contact:      url("sprites/d.gif");
+  --image-profile:      url("images/sprites/e.gif");
+  --image-work:         url("images/sprites/f.gif");
+  --image-illustration: url("images/sprites/a.gif");
+  --image-line:         url("images/sprites/b.gif");
+  --image-goods:        url("images/sprites/g.gif");
+  --image-blog:         url("images/sprites/c.gif");
+  --image-contact:      url("images/sprites/d.gif");
   
   --image-contrast-enhancer: radial-gradient(var(--background-color), rgba(255, 255, 255, 0));
   

@@ -34,13 +34,20 @@ var backgroundMaterial =
 	  });
 	  
 const textureLoader = new THREE.TextureLoader();
+const loadStart = Date.now();
 let loadedAllImages = false;
 let textureLoadCount = 0;
+
+// Ensure our timings all start from when we're actually ready to go.
+let loadingLagTime = 0;
+
 const countTexture = function() {
   textureLoadCount ++;
   if (textureLoadCount >= 8) {
-    document.body.classList.add("textures-loaded")
     loadedAllImages = true;
+    loadingLagTime = Date.now() - loadStart;
+    document.body.classList.add("textures-loaded");
+    animate();
   }
 };
 
@@ -95,7 +102,6 @@ function setup() {
 	document.body.querySelector("header").appendChild(renderer.domElement);
 
 	buildScene();
-	animate();
 }
 
 function resize() {
@@ -118,23 +124,19 @@ function quadraticEase(time, maxTime) {
     );
 }
 
-// Ensure our timings all start from when we're actually ready to go.
-let lagTime = 0;
-
 function animate(time = 0) {
 	requestAnimationFrame(animate);
 	
 	/* No animation until we're done loading */
 	if (!loadedAllImages) {
-  	lagTime = time;
   	return;
 	}
 	
 	/* If we're good to go subtract loading lag */
-	time -= lagTime;
+  let normalisedTime = time - loadingLagTime;
 	
 	/* Colour change */
-	animateBG(time);
+	animateBG(normalisedTime);
 	
 	/* Bail out if we know the box isn't visible */
 	if (document.body.scrollTop > window.innerHeight * 1.5) {
@@ -143,7 +145,7 @@ function animate(time = 0) {
 
 	camera.rotateOnWorldAxis(new THREE.Vector3(0, 0.4, 1).normalize(), rad(0.2));
 
-	const amount = Math.sin(time/10e3 % 10)
+	const amount = Math.sin(normalisedTime/10e3 % 10)
 
 	lights.forEach((light, index) => {
 		light.color.setRGB(Math.abs(amount), Math.abs(amount), Math.abs(amount))
@@ -154,7 +156,7 @@ function animate(time = 0) {
 
   sprites.forEach((sprite, index) => {
 		let count = (((index + 1) / length) * 6) - 3;
-		let timeRadius = (time / 2000) + count;
+		let timeRadius = (normalisedTime / 2000) + count;
 
     sprite.position.set(
       Math.sin(timeRadius) * distributionBound,
@@ -165,7 +167,7 @@ function animate(time = 0) {
 
 	/* Fade in */
 	if (canvasOpacity < 1) {
-		canvasOpacity = quadraticEase(time, 7000);
+		canvasOpacity = quadraticEase(normalisedTime, 10000);
 		renderer.domElement.style.opacity = canvasOpacity;
 	}
 
