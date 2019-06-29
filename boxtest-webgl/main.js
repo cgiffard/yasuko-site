@@ -33,7 +33,7 @@ var backgroundMaterial =
 		  opacity: 0.5,
 	  });
 
-var sandMaterialTexture = new THREE.TextureLoader().load("sand-texture.jpg");
+var sandMaterialTexture = new THREE.TextureLoader().load("images/sand-texture.jpg");
 sandMaterialTexture.wrapS = THREE.RepeatWrapping;
 sandMaterialTexture.wrapT = THREE.RepeatWrapping;
 
@@ -52,7 +52,7 @@ const buttonTextures = [];
 const buttonMaterials = [];
 
 ["a", "b", "c", "d", "e", "f", "g"].forEach((id) => {
-	let buttonTexture = new THREE.TextureLoader().load(`sprites/${id}.gif`);
+	let buttonTexture = new THREE.TextureLoader().load(`images/sprites/${id}.gif`);
 	let buttonMaterial = new THREE.SpriteMaterial( { map: buttonTexture, color: 0xffffff, fog: true } );
 	buttonTexture.transparent = true;
 	buttonTextures.push(buttonTexture);
