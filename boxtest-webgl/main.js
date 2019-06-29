@@ -118,13 +118,20 @@ function quadraticEase(time, maxTime) {
     );
 }
 
+// Ensure our timings all start from when we're actually ready to go.
+let lagTime = 0;
+
 function animate(time = 0) {
 	requestAnimationFrame(animate);
 	
 	/* No animation until we're done loading */
 	if (!loadedAllImages) {
+  	lagTime = time;
   	return;
 	}
+	
+	/* If we're good to go subtract loading lag */
+	time -= lagTime;
 	
 	/* Colour change */
 	animateBG(time);
