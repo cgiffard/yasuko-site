@@ -1,4 +1,3 @@
-
 window.addEventListener("load", setup);
 window.addEventListener("resize", resize);
 
@@ -6,21 +5,125 @@ const scene       = new THREE.Scene();
 const spriteScene = new THREE.Scene();
 const renderer    = new THREE.WebGLRenderer({
 	alpha: true,
-	antialias: true });
+  antialias: true
+});
 
 let canvasOpacity = 0;
+let distributionBound = window.innerWidth * 0.3;
 
 scene.fog = new THREE.Fog( 0xE1F0F5, 0, window.innerHeight );
 spriteScene.fog = new THREE.Fog( 0xE1F0F5, 0, window.innerHeight * 0.8 );
-
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 let   camera   = setupCamera();
 
 const objects  = [];
 const lights   = [];
 const sprites  = [];
+
+const depthMaterial = new THREE.MeshDepthMaterial();
+depthMaterial.blending = THREE.NoBlending;
+
+const renderTargetDepth = new THREE.WebGLRenderTarget(
+  window.innerWidth,
+  window.innerHeight,
+  {
+    // minFilter: THREE.LinearFilter,
+    // magFilter: THREE.LinearFilter,
+    // format: THREE.RGBFormat,
+    depthBuffer: true,
+    stencilBuffer: true
+  });
+
+renderTargetDepth.texture.name = "depthRenderPass";
+
+const wobblyLineShader = {
+	uniforms: {
+		tDiffuse:          { value: null },
+		tDepth:            { value: null },
+    lineColor:         { value: new THREE.Color(0xffffff) },
+    contrastThreshold: { value: 0.05 },
+    sampleDistance:    { value: 1 },
+    viewWidth:         { value: window.innerWidth },
+    viewHeight:        { value: window.innerHeight },
+    time:              { value: 0 }
+	},
+	vertexShader: `
+		varying vec2 vUv;
+		void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
+		}
+	`,
+  fragmentShader: `
+    #extension GL_EXT_frag_depth : enable
+
+    varying vec2 vUv;
+    
+    uniform sampler2D tDiffuse;
+    uniform sampler2D tDepth;
+
+    uniform vec3 lineColor;
+    uniform float contrastThreshold;
+    uniform float sampleDistance;
+
+    uniform float viewWidth;
+    uniform float viewHeight;
+    uniform float time;
+    
+		void main() {
+      float pixelWidth = 1.0 / viewWidth;
+      float pixelHeight = 1.0 / viewHeight;
+
+      vec2 coords = sin(vUv) + (sin(vUv * 50.0) * 0.001);
+      vec2 coords2 =
+        sin(vUv) + (sin(vUv * 100.0) * 0.001) + (sin(vUv * 10.0) * 0.005);
+
+      vec3 luminosityBias = vec3(0.2125, 0.7154, 0.0721);
+      float xmdist = (sampleDistance * pixelWidth) * -1.0;
+      float xpdist = (sampleDistance * pixelWidth);
+      float ymdist = (sampleDistance * pixelHeight) * -1.0;
+      float ypdist = (sampleDistance * pixelHeight);
+      
+      vec2 diagonal1 = clamp(coords2 + vec2(     0, ymdist), 0.0, 1.0);
+      vec2 diagonal2 = clamp(coords2 + vec2(xpdist, 0     ), 0.0, 1.0);
+      vec2 diagonal3 = clamp(coords2 + vec2(     0, ypdist), 0.0, 1.0);
+      vec2 diagonal4 = clamp(coords2 + vec2(xmdist, 0     ), 0.0, 1.0);
+
+      float diagSample1 = dot(texture2D(tDiffuse, diagonal1).rgb, luminosityBias);
+      float diagSample2 = dot(texture2D(tDiffuse, diagonal2).rgb, luminosityBias);
+      float diagSample3 = dot(texture2D(tDiffuse, diagonal3).rgb, luminosityBias);
+      float diagSample4 = dot(texture2D(tDiffuse, diagonal4).rgb, luminosityBias);
+      float pixelLuminosity = dot(texture2D(tDiffuse, vUv).rgb, luminosityBias);
+
+      float maxDiag =
+        max(diagSample1, max(diagSample2, max(diagSample3, diagSample4)));
+
+      float minDiag =
+        min(diagSample1, min(diagSample2, min(diagSample3, diagSample4)));
+
+      float contrast = (maxDiag - minDiag) / 1.0;
+
+      vec4 previousPassColor = texture2D(tDiffuse, coords);
+      vec4 resultPixelColor = previousPassColor;
+
+      if (contrast >= contrastThreshold) {
+        resultPixelColor =
+          vec4(1, 1, 1, 1);
+      }
+
+      gl_FragColor = vec4(
+        tDepth.rgb,
+        resultPixelColor.w);
+		}
+	`,
+};
+
+const wobblyLinePass = new THREE.ShaderPass(wobblyLineShader);
+wobblyLinePass.renderToScreen = true;
+
+const composer = new THREE.EffectComposer(renderer);
+composer.addPass(new THREE.RenderPass(scene, camera));
+composer.addPass(wobblyLinePass);
 
 var boxMaterial =
 	  new THREE.MeshPhongMaterial({
@@ -83,10 +186,13 @@ function rad(input) {
 
 function setupCamera() {
 	let intCamera = new THREE.OrthographicCamera(
-		window.innerWidth / - 2,
-		window.innerWidth / 2,
-		window.innerHeight / 2,
-		window.innerHeight / - 2, -2000, 2000);
+		window.innerWidth / - 2,   // left
+		window.innerWidth / 2,     // right
+		window.innerHeight / 2,    // top
+    window.innerHeight / - 2,  // bottom
+    -2000,                     // near
+    2000                       // far
+  );
 
 	intCamera.rotateOnWorldAxis(new THREE.Vector3(1, 0, 0), rad(60));
 	intCamera.up = new THREE.Vector3(0, 0, 1);
@@ -98,15 +204,25 @@ function setupCamera() {
 
 function setup() {
 	renderer.setSize(window.innerWidth, window.innerHeight);
-	renderer.setPixelRatio( window.devicePixelRatio );
+  composer.setSize(window.innerWidth, window.innerHeight);
+  composer.setPixelRatio(Math.max(window.devicePixelRatio, 2));
+	renderer.setPixelRatio(Math.max(window.devicePixelRatio, 2));
 	document.body.querySelector("header").appendChild(renderer.domElement);
 
 	buildScene();
 }
 
 function resize() {
-	camera = setupCamera();
-	renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.left   = window.innerWidth  / - 2;
+  camera.right  = window.innerWidth  /   2;
+  camera.top    = window.innerHeight /   2;
+  camera.bottom = window.innerHeight / - 2;
+  camera.updateProjectionMatrix();
+
+  composer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  
+  render();
 }
 
 // Thanks, https://math.stackexchange.com/questions/121720/ease-in-out-function
@@ -125,7 +241,8 @@ function quadraticEase(time, maxTime) {
 }
 
 function animate(time = 0) {
-	requestAnimationFrame(animate);
+  if (time > 1000) return;
+  requestAnimationFrame(animate);
 	
 	/* No animation until we're done loading */
 	if (!loadedAllImages) {
@@ -151,7 +268,6 @@ function animate(time = 0) {
 		light.color.setRGB(Math.abs(amount), Math.abs(amount), Math.abs(amount))
 	});
 
-	const distributionBound = window.innerWidth * 0.3;
 	const { length } = sprites;
 
   sprites.forEach((sprite, index) => {
@@ -166,19 +282,52 @@ function animate(time = 0) {
 	});
 
 	/* Fade in */
+    canvasOpacity = 1;
+		renderer.domElement.style.opacity = canvasOpacity;
 	if (canvasOpacity < 1) {
-		canvasOpacity = quadraticEase(normalisedTime, 10000);
+    canvasOpacity = quadraticEase(normalisedTime, 10000);
+    canvasOpacity = 1;
 		renderer.domElement.style.opacity = canvasOpacity;
 	}
 
-	/* Render both scenes */
-	renderer.autoClear = true;
-	renderer.render( scene, camera );
-	renderer.autoClear = false;
-	renderer.render( spriteScene, camera );
+  render();
+}
+
+function render() {
+  /* Render both scenes */
+  renderer.autoClear = true;
+  composer.autoClear = true;
+
+  // First, render the scene to a depth buffer
+  // and feed that into the composer
+  renderer.setClearColor( 0xffffff );
+  renderer.setClearAlpha( 1.0 );
+  scene.overrideMaterial = depthMaterial;
+  renderer.render(scene, camera);
+  renderer.setRenderTarget(renderTargetDepth);
+  renderer.render(scene, camera);
+
+  wobblyLineShader.uniforms.tDepth.value =
+    renderTargetDepth.texture;
+  console.log(renderTargetDepth)
+  renderer.setClearColor( 0x000000 );
+  renderer.setClearAlpha( 0 );
+
+  renderer.setRenderTarget(null);
+  scene.overrideMaterial = null;
+
+  // Now render the scene with lines through the
+  // postprocess wobbly line shader
+  composer.render(0);
+
+  // Now render the characters on top, depth map restored
+  renderer.autoClear = false;
+  // renderer.clearDepth();
+  renderer.render( spriteScene, camera );
 }
 
 function buildScene() {
+  distributionBound = window.innerWidth * 0.3;
 	objects.push(...constructBox());
 	lights.push(...constructLights());
 	sprites.push(...constructSprites());
@@ -387,6 +536,7 @@ function animateBG(time = 0) {
   lights[1].color.setRGB(...newForeground.map((i) => i / 255))
   scene.fog.color.setRGB(...newForeground.map((i) => i / 255));
   spriteScene.fog.color.setRGB(...newForeground.map((i) => i / 255));
+  wobblyLineShader.uniforms.lineColor.value.setRGB(...newKeyColour.map((i) => i / 255));
 
   // Finally, do the expensive DOM stuff at once.
   document.body.style.setProperty("--foreground-color", newForegroundRGB);
