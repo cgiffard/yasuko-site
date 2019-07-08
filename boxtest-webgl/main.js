@@ -45,7 +45,7 @@ const wobblyLineShader = {
     sampleDistance:    { value: 1 },
     viewWidth:         { value: window.innerWidth },
     viewHeight:        { value: window.innerHeight },
-    time:              { value: 0 }
+    time:              { value: 0.1 }
 	},
 	vertexShader: `
 		varying vec2 vUv;
@@ -69,7 +69,19 @@ const wobblyLineShader = {
     uniform float viewWidth;
     uniform float viewHeight;
     uniform float time;
+
+    float rand(vec2 co, float timeInput){
+      return fract(sin(dot(co.xy, vec2(12.9898,78.233))) * time);
+    }
     
+    // Return amount to boost luminosity
+    float boostLuminosity(float inputLum) {
+      float unscaled = min(1+(cos((inputLum / 2.6) * pi)*-1.0),1.0);
+      float scaled = (unscaled / 2.0) + 0.4;
+      float clamped = clamp(unscaled, inputLum, 1);
+      return 1.0 - clamped;
+    }
+
 		void main() {
       float pixelWidth = 1.0 / viewWidth;
       float pixelHeight = 1.0 / viewHeight;
@@ -93,7 +105,7 @@ const wobblyLineShader = {
       float diagSample2 = dot(texture2D(tDiffuse, diagonal2).rgb, luminosityBias);
       float diagSample3 = dot(texture2D(tDiffuse, diagonal3).rgb, luminosityBias);
       float diagSample4 = dot(texture2D(tDiffuse, diagonal4).rgb, luminosityBias);
-      float pixelLuminosity = dot(texture2D(tDiffuse, vUv).rgb, luminosityBias);
+      float pixelLuminosity = dot(texture2D(tDiffuse, coords).rgb, luminosityBias);
 
       float maxDiag =
         max(diagSample1, max(diagSample2, max(diagSample3, diagSample4)));
@@ -108,12 +120,13 @@ const wobblyLineShader = {
 
       if (contrast >= contrastThreshold) {
         resultPixelColor =
-          vec4(1, 1, 1, 1);
+          vec4(lineColor.rgb, 1);
+      } else {
+        resultPixelColor = resultPixelColor *
+          boostLuminosity(pixelLuminosity);
       }
-
-      gl_FragColor = vec4(
-        tDepth.rgb,
-        resultPixelColor.w);
+      
+      gl_FragColor = resultPixelColor；
 		}
 	`,
 };
@@ -205,8 +218,9 @@ function setupCamera() {
 function setup() {
 	renderer.setSize(window.innerWidth, window.innerHeight);
   composer.setSize(window.innerWidth, window.innerHeight);
+  renderTargetDepth.setSize(window.innerWidth, window.innerHeight);
   composer.setPixelRatio(Math.max(window.devicePixelRatio, 2));
-	renderer.setPixelRatio(Math.max(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.max(window.devicePixelRatio, 2));
 	document.body.querySelector("header").appendChild(renderer.domElement);
 
 	buildScene();
@@ -241,16 +255,16 @@ function quadraticEase(time, maxTime) {
 }
 
 function animate(time = 0) {
-  if (time > 1000) return;
   requestAnimationFrame(animate);
 	
 	/* No animation until we're done loading */
 	if (!loadedAllImages) {
   	return;
-	}
+  }
 	
 	/* If we're good to go subtract loading lag */
   let normalisedTime = time - loadingLagTime;
+  wobblyLineShader.uniforms.time.value = normalisedTime;
 	
 	/* Colour change */
 	animateBG(normalisedTime);
@@ -282,8 +296,6 @@ function animate(time = 0) {
 	});
 
 	/* Fade in */
-    canvasOpacity = 1;
-		renderer.domElement.style.opacity = canvasOpacity;
 	if (canvasOpacity < 1) {
     canvasOpacity = quadraticEase(normalisedTime, 10000);
     canvasOpacity = 1;
@@ -300,21 +312,25 @@ function render() {
 
   // First, render the scene to a depth buffer
   // and feed that into the composer
-  renderer.setClearColor( 0xffffff );
-  renderer.setClearAlpha( 1.0 );
-  scene.overrideMaterial = depthMaterial;
-  renderer.render(scene, camera);
-  renderer.setRenderTarget(renderTargetDepth);
-  renderer.render(scene, camera);
+  // renderer.setClearColor( 0xffffff );
+  // renderer.setClearAlpha( 1.0 );
+  // scene.overrideMaterial = depthMaterial;
+  // renderer.render(scene, camera);
+  // renderer.setRenderTarget(renderTargetDepth);
+  // renderer.render(scene, camera);
+  // renderer.autoClear = false
 
   wobblyLineShader.uniforms.tDepth.value =
+    // sandMaterialTexture;
     renderTargetDepth.texture;
-  console.log(renderTargetDepth)
-  renderer.setClearColor( 0x000000 );
-  renderer.setClearAlpha( 0 );
+  // console.log(renderTargetDepth)
 
-  renderer.setRenderTarget(null);
-  scene.overrideMaterial = null;
+  // console.log(sandMaterialTexture);
+  // renderer.setClearColor( 0x000000 );
+  // renderer.setClearAlpha( 0 );
+
+  // renderer.setRenderTarget(null);
+  // scene.overrideMaterial = null;
 
   // Now render the scene with lines through the
   // postprocess wobbly line shader
@@ -331,8 +347,8 @@ function buildScene() {
 	objects.push(...constructBox());
 	lights.push(...constructLights());
 	sprites.push(...constructSprites());
-	scene.add(...objects, ...lights);
-	spriteScene.add(...sprites);
+	scene.add(...objects, ...lights, ...sprites);
+	// spriteScene.add(...sprites);
 }
 
 function constructLights() {
