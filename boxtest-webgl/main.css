@@ -25,10 +25,12 @@ body {
   --border-width: 10px;
   --container-padding: 5vmax;
   
+  -webkit-text-size-adjust: 100%;
+  
   margin: 0px;
   padding: 0px;
   background-repeat: no-repeat;
-  background-size: 100vw 100vh;
+  background-size: 100vw 110vmax;
   background-attachment: fixed;
   background-color: #E1F0F5;
   background-color: var(--foreground-color);
@@ -190,11 +192,11 @@ main section header {
 main h1 {
   text-transform: lowercase;
   font-weight: lighter;
-  font-size: 8vw;
+  font-size: 8vmax;
   
   width: 100%;
   margin: 0;
-  line-height: 10vw;
+  line-height: 10vmax;
   
   background-color: var(--key-color);
   color: white;
@@ -213,8 +215,8 @@ main h1 + .comic-panel {
   position: relative;
   object-fit: cover;
   display: block;
-  margin-top: -8vw;
-  height: 20vw;
+  margin-top: -8vmax;
+  height: 20vmax;
   width: 100%;
   
   filter: sepia(100%) hue-rotate(var(--hue-rotate)) saturate(70%);
