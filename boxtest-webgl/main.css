@@ -1,6 +1,5 @@
 * {
   box-sizing: border-box;
-  transition: color 1000ms linear, border 1000ms linear, background 1000ms linear;
 }
 
 html {
@@ -212,13 +211,8 @@ main h1 {
 
 main h1 + .comic-panel {
   position: relative;
-  background-image: url("art/face.jpg");
-  background-image: attr("href");
-  background-position: left center;
   object-fit: cover;
-  background-size: cover;
   display: block;
-  content: " ";
   margin-top: -8vw;
   height: 20vw;
   width: 100%;
