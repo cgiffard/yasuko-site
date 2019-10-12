@@ -1,15 +1,17 @@
 * {
-	box-sizing: border-box;
+  box-sizing: border-box;
+  transition: color 1000ms linear, border 1000ms linear, background 1000ms linear;
 }
 
 html {
-	font-family: 'Helvetica Neue', sans-serif;
+  font-family: 'Helvetica Neue', sans-serif;
 }
 
 body {
   --foreground-color: #E1F0F5;
   --background-color: #FF00FF;
   --key-color: #FF00FF;
+  --hue-rotate: 270deg;
  
   /* Sprite images */
   --image-profile:      url("images/sprites/e.gif");
@@ -20,58 +22,60 @@ body {
   --image-blog:         url("images/sprites/c.gif");
   --image-contact:      url("images/sprites/d.gif");
   
-  --image-contrast-enhancer: radial-gradient(var(--background-color), rgba(255, 255, 255, 0));
+  /* Design constants */
+  --border-width: 10px;
+  --container-padding: 5vmax;
   
-	margin: 0px;
+  margin: 0px;
   padding: 0px;
-	background-repeat: no-repeat;
+  background-repeat: no-repeat;
   background-size: 100vw 100vh;
   background-attachment: fixed;
-	background-color: #E1F0F5;
-	background-color: var(--foreground-color);
-	background-image: linear-gradient(var(--foreground-color), var(--background-color));
+  background-color: #E1F0F5;
+  background-color: var(--foreground-color);
+  background-image: linear-gradient(var(--foreground-color), var(--background-color));
 }
 
-header {
-	text-align: center;
-	width: 100%;
-	height: 100vh;
-	
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	align-items: center;
+body > header {
+  text-align: center;
+  width: 100%;
+  height: 100vh;
+  
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
-header h1 {
+body > header h1 {
   flex: 1;
   
-	margin: 0px;
-	padding: 0px;
-	width: 100%;
-	z-index: 10;
-	
-	font-weight: lighter;
-	text-transform: lowercase;
-	letter-spacing: 0.4em;
-	font-size: 7vw;
-	/* Making the gap between anaismi and yasoko sit in the middle */
-	text-indent: 0.5em;
-	
-	color: white;
-	text-shadow: black 0px 0px 100px;
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
+  z-index: 10;
+  
+  font-weight: lighter;
+  text-transform: lowercase;
+  letter-spacing: 0.4em;
+  font-size: 7vw;
+  /* Making the gap between anaismi and yasoko sit in the middle */
+  text-indent: 0.5em;
+  
+  color: white;
+  text-shadow: black 0px 0px 100px;
 }
 
-header h1 .lighter {
-	text-shadow: white 0px 0px 1px,
-	             white 0px 0px 2px,
-	             white 0px 0px 3px,
-	             white 0px 0px 10px,
-	             white 0px 0px 10px;
+body > header h1 .lighter {
+  text-shadow: white 0px 0px 1px,
+               white 0px 0px 2px,
+               white 0px 0px 3px,
+               white 0px 0px 10px,
+               white 0px 0px 10px;
 }
 
-.loaded.textures-loaded header h1 {
-	/* Modesty? Who knows. */
+.loaded.textures-loaded h1.texttop {
+  /* Modesty? Who knows. */
   animation-duration: 7s;
   animation-name: fadeOutTitle;
   animation-iteration-count: 1;
@@ -92,230 +96,150 @@ header h1 .lighter {
   }
 }
 
+@keyframes fadeInCanvas {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 @media(max-width: 699px) {
-  header h1 {
+  body > header h1 {
     font-size: 12vw;
   }
   
-  header h1 .lighter {
+  body > header h1 .lighter {
     display: inline-block;
     width: 100vw;
   }
 }
 
 canvas {
-  position: absolute;
-	width: 100vw;
-	height: 100vh;
-	top: 0px;
-	left: 0px;
-	opacity: 0;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0px;
+  left: 0px;
 }
 
-/* Only fix the canvas in place on desktop/bigger stuff */
-@media(min-width: 700px) {
-  canvas {
-    position: fixed;
-    top: 0px;
-  }
-}
-
-nav {
-	background-color: var(--key-color);
-	width: 100vw;
-}
-  
-nav li, nav ul {
-	display: block;
-	width: 100%;
-	list-style: none;
-	margin: 0;
-	padding: 0;
-}
-
-nav ul {
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	align-content: flex-start;
-}
-
-nav a {
-  position: relative;
-	color: white;
-	text-transform: uppercase;
-	text-decoration: none;
-	font-size: smaller;
-	display: block;
-	width: 100%;
-	height: 100%;
-	text-align: center;
-}
-
-@media(max-width: 699px) {
-  nav ul {
-  	padding: 1vw;
-  }
-  
-  nav li {
-    display: block;
-    flex: 1;
-    min-width: 44vw;
-    height: 25vw;
-    min-height: 15vh;
-  	line-height: 19vw;
-  	padding: 1vw;
-  }
-  
-  nav a {
-  	padding: 3vw;
-  	outline: solid var(--background-color) 1px;
-    border-right: solid var(--background-color) 1vw;
-    border-bottom: solid var(--background-color) 1vw;
-  	line-height: 17vw;
-  	
-  	background-position: center center;
-  	background-size: cover;
-  	background-repeat: no-repeat;
-  }
-  
-  nav a:hover {
-    padding: 3vw;
-    font-weight: bold;
-    background-color: var(--background-color);
-  	color: var(--key-color);
-  }
-  
-  nav li.profile a:hover {
-  	background-image: var(--image-contrast-enhancer),
-  	                  var(--image-profile);
-  }
-  
-  nav li.work a:hover {
-  	background-image: var(--image-contrast-enhancer),
-  	                  var(--image-work);
-  }
-  
-  nav li.illustration a:hover {
-  	background-image: var(--image-contrast-enhancer),
-  	                  var(--image-illustration);
-  }
-  
-  nav li.line a:hover {
-  	background-image: var(--image-contrast-enhancer),
-  	                  var(--image-line);
-  }
-  
-  nav li.goods a:hover {
-  	background-image: var(--image-contrast-enhancer),
-  	                  var(--image-goods);
-  }
-  
-  nav li.blog a:hover {
-  	background-image: var(--image-contrast-enhancer),
-  	                  var(--image-blog);
-  }
-  
-  nav li.contact a:hover {
-  	background-image: var(--image-contrast-enhancer),
-  	                  var(--image-contact);
-  }
-}
-
-@media(min-width: 700px) {
-  nav {
-    position: relative;
-  	z-index: 20;
-  	margin-top: -10vh;
-  	background-color: var(--key-color);
-  	background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4));
-  	height: 10vh;
-  	width: 100vw;
-  	line-height: 10vh;
-  	padding: 0 10vw;
-  }
-  
-  .nav-fixed nav {
-    overflow: hidden;
-    position: fixed;
-    top: 0px;
-    margin-top: 0px;
-  }
-  
-  nav li {
-  	flex: 1;
-  	text-align: center;
-  }
-  
-  nav a:hover {
-    background-color: var(--key-color);
-  }
-  
-  nav li:hover a::before {
-  	content: " ";
-  	display: block;
-  	position: absolute;
-  	width: 12vw;
-  	height: 10vh;
-  	top: -10vh;
-  	background-position: center center;
-  	background-size: contain;
-  	background-repeat: no-repeat;
-  }
-  
-  nav li.profile:hover a::before {
-  	background-image: var(--image-profile);
-  }
-  
-  nav li.work:hover a::before {
-  	background-image: var(--image-work);
-  }
-  
-  nav li.illustration:hover a::before {
-  	background-image: var(--image-illustration);
-  }
-  
-  nav li.line:hover a::before {
-  	background-image: var(--image-line);
-  }
-  
-  nav li.goods:hover a::before {
-  	background-image: var(--image-goods);
-  }
-  
-  nav li.blog:hover a::before {
-  	background-image: var(--image-blog);
-  }
-  
-  nav li.contact:hover a::before {
-  	background-image: var(--image-contact);
-  }
+.textures-loaded canvas {
+  animation-duration: 5s;
+  animation-name: fadeInCanvas;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
 }
 
 main {
   position: relative;
-  padding: 10vw;
+  margin: 0px auto;
+  max-width: 60em;
   z-index: 5;
-
-	background-repeat: no-repeat, no-repeat;
-	background-position: top left, left 100vh;
-  background-size: 100vw 100vh, 100% 100%;
-	background-image: linear-gradient(rgba(255, 255, 255, 0.7), white, white),
-	                  linear-gradient(white, white);
+  padding-top: var(--container-padding);
+  padding-bottom: var(--container-padding);
 }
 
-main :first-child {
-  padding-top: 0px;
-  margin-top: 0px;
+main nav {
+  font-size: 4vmin;
+  line-height: 1.5;
+  font-weight: bold;
+  color: #999;
+  padding: var(--container-padding);
+  
+  transform: skewY(-3deg);
+  border-top: dashed var(--key-color) 10px;
+  
+  background-color: white;
+}
+
+main nav dl,
+main nav dt,
+main nav dd {
+  list-style-type: none;
+  padding: 0;
+  margin-left: 0;
+}
+
+main nav ruby {
+  display: inline-block;
+  margin-bottom: 1em;
+  background-color: white;
+}
+
+main nav dd {
+  color: #DDD;
+  text-align: left;
+  font-weight: lighter;
+}
+
+main nav a {
+  border-bottom-width: 0.1em;
+}
+
+main section header {
+  position: relative;
+  transform: skewY(-3deg);
+  border-bottom: solid 10px var(--key-color);
+  margin-bottom: 2vmin;
+  margin-top: -3vmax;
+  width: 100%;
+  z-index: 20;
 }
 
 main h1 {
   text-transform: lowercase;
   font-weight: lighter;
-  padding-bottom: 1em;
-  border-bottom: solid #999 1px;
-  border-bottom-color: var(--key-color);
-  color: var(--key-color);
+  font-size: 8vw;
+  
+  width: 100%;
+  margin: 0;
+  line-height: 10vw;
+  
+  background-color: var(--key-color);
+  color: white;
+  font-style: oblique;
+  
+  text-indent: var(--container-padding);
+  
+  position: relative;
+  z-index: 10;
+  
+  border-bottom: solid white 10px;
+  overflow: hidden;
+}
+
+main h1 + .comic-panel {
+  position: relative;
+  background-image: url("art/face.jpg");
+  background-image: attr("href");
+  background-position: left center;
+  object-fit: cover;
+  background-size: cover;
+  display: block;
+  content: " ";
+  margin-top: -8vw;
+  height: 20vw;
+  width: 100%;
+  
+  filter: sepia(100%) hue-rotate(var(--hue-rotate)) saturate(70%);
+}
+
+main section:nth-child(2n + 1) header {
+  transform: skewY(3deg);
+}
+
+main section article {
+  padding: var(--container-padding);
+  padding-top: 7vmax;
+  margin-top: -5vmax;
+  margin-bottom: -5vmax;
+  padding-bottom: 7vmax;
+  
+  border-left: 10px solid var(--key-color);
+  border-right: 10px solid var(--key-color);
+  background-color: white;
 }
 
 main h2 {
@@ -379,27 +303,21 @@ main li {
   margin-bottom: 0.5em;
 }
 
-@media(min-width: 700px) {
-  img.left {
-    max-width: 45%;
-    padding-right: 5%;
-    float: left;
-  }
+footer {
+  position: relative;
+  text-transform: lowercase;
+  font-weight: bold;
+  width: 100%;
+  margin: 0;
+  margin-bottom: 20vh;
+  padding-left: var(--container-padding);
+  padding-right: var(--container-padding);
+  line-height: 10vw;
   
-  img.right {
-    max-width: 45%;
-    padding-left: 5%;
-    float: right;
-  }
-}
-
-main :last-child {
-  padding-bottom: 0px;
-  margin-bottom: 0px;
-}
-
-main :after {
-  content: " ";
-  display: block;
-  clear: both;
+  background-color: var(--key-color);
+  color: white;
+  font-style: oblique;
+  z-index: 10;
+  
+  transform: skewY(-3deg);
 }
