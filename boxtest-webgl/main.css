@@ -236,6 +236,7 @@ main section article {
   border-left: 10px solid var(--key-color);
   border-right: 10px solid var(--key-color);
   background-color: white;
+  min-height: 33em;
 }
 
 main h2 {

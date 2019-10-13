@@ -290,7 +290,7 @@ function animate(time = 0) {
     sprite.position.set(
       Math.sin(timeRadius) * distributionBound,
       Math.cos(timeRadius) * distributionBound,
-      w_height / 4
+      Math.min(w_width, w_height) / 4
     );
   });
 
@@ -303,10 +303,12 @@ function render() {
 }
 
 function buildScene() {
-  distributionBound = w_width * 0.3;
-  objects.push(...constructBox());
-  lights.push(...constructLights());
-  sprites.push(...constructSprites());
+  const boxSizingParam = Math.min(w_width, w_height) * 0.9
+  distributionBound = boxSizingParam * 0.3;
+  objects.push(...constructBox(boxSizingParam));
+  lights.push(...constructLights(boxSizingParam));
+  sprites.push(...constructSprites(boxSizingParam));
+  
   scene.add(...objects, ...lights, ...sprites);
 }
 
@@ -328,25 +330,25 @@ function constructLights() {
   ];
 }
 
-function constructBox() {
-  const boxDiameter = w_width;
+function constructBox(boxSizingParam) {
+  const boxDiameter = boxSizingParam;
   const boxRadius = boxDiameter / 2;
-  const boxHeight = w_height / 2;
-  const boxThickness = w_width / 50;
+  const boxHeight = boxSizingParam / 2;
+  const boxThickness = boxSizingParam / 50;
   const boxInsideDiameter = boxDiameter - (boxThickness * 2);
   const perturbDistance = boxHeight / 10;
   const sandVerticesCount = boxInsideDiameter / 10 | 0;
 
   var baseGeom = new THREE.BoxGeometry(boxDiameter, boxDiameter, 1);
   var sideGeom = new THREE.BoxGeometry(
-    w_width / 50,
-    w_width,
-    w_height / 2
+    boxThickness,
+    boxDiameter,
+    boxHeight
   );
   var perpendicularSideGeom = new THREE.BoxGeometry(
-    w_width,
-    w_width / 50,
-    w_height / 2
+    boxDiameter,
+    boxThickness,
+    boxHeight
   );
 
   var base = new THREE.Mesh(baseGeom, boxMaterial);
@@ -395,7 +397,7 @@ function constructBox() {
   ];
 }
 
-function constructSprites() {
+function constructSprites(boxSizingParam) {
   const distributionBound = w_width * 0.3;
   const { length } = buttonMaterials;
   return buttonMaterials.map((material, index) => {
@@ -407,7 +409,7 @@ function constructSprites() {
       Math.cos(count) * distributionBound,
       150
     );
-    sprite.scale.set( w_width / 5, w_width / 5, 1.0 );
+    sprite.scale.set( boxSizingParam / 5, boxSizingParam / 5, 1.0 );
     
     return sprite;
   });
