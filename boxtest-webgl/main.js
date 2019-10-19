@@ -3,6 +3,10 @@ window.addEventListener("resize", resize);
 window.addEventListener("scroll", scroll);
 
 const MAX_DEVICE_PIXEL_RATIO = 1;
+const ROTATIONS_PER_SECOND = 0.025;
+const ZOOM_IN_THRESHOLD = 1;
+const BASE_BOX_DIAMETER = 1000;
+const BASE_BOX_SCALE = 0.7; // 70% of the average dimensions of viewport width and height
 
 /* Cache values which are expensive to look-up */
 let w_width  = window.innerWidth;
@@ -26,15 +30,13 @@ const renderer    = new THREE.WebGLRenderer({
   antialias: true
 });
 
-let distributionBound = w_width * 0.3;
-
 scene.fog = new THREE.Fog( 0xE1F0F5, 0, w_height );
 
-let   camera   = setupCamera();
+let camera = setupCamera();
 
-const objects  = [];
-const lights   = [];
-const sprites  = [];
+const lights = [];
+let sprites;
+let box;
 
 const wobblyLineShader = new THREE.ShaderPass({
   uniforms: {
@@ -100,9 +102,9 @@ const wobblyLineShader = new THREE.ShaderPass({
       float timeSecs = time / 1000.0;
       float wrappedTime = mod(timeSecs, M_PI * 2.0);
 
-      vec2 coords = sin(vUv) + (sin(vUv * 50.0) * 0.001) + (sin(wrappedTime) * 0.001);
+      vec2 coords = vUv + (sin(vUv * 50.0) * 0.001) + (sin(wrappedTime) * 0.001);
       vec2 coords2 =
-        sin(vUv) + (sin(vUv * 100.0) * 0.001) + (sin(vUv * 10.0) * 0.005)
+        vUv + (sin(vUv * 100.0) * 0.001) + (sin(vUv * 10.0) * 0.005)
         + (cos(wrappedTime) * 0.001);
 
       float xmdist = (sampleDistance * pixelWidth) * -1.0;
@@ -156,12 +158,6 @@ var boxMaterial =
     new THREE.MeshPhongMaterial({
       color: 0xFF00FF
     });
-
-var backgroundMaterial =
-    new THREE.MeshPhongMaterial({
-      color: 0xE1F0F5,
-      opacity: 0.5,
-    });
     
 const textureLoader = new THREE.TextureLoader();
 const loadStart = Date.now();
@@ -190,10 +186,10 @@ var sandMaterial =
       color: 0xffffff,
       opacity: 1,
       transparent: false,
-      bumpScale: 3,
+      bumpScale: 1,
       bumpMap: sandMaterialTexture,
       roughnessMap: sandMaterialTexture,
-      roughness: 2
+      roughness: 7
     });
 
 const buttonTextures = [];
@@ -221,12 +217,38 @@ function setupCamera() {
     2000             // far
   );
 
-  intCamera.rotateOnWorldAxis(new THREE.Vector3(1, 0, 0), rad(60));
-  intCamera.up = new THREE.Vector3(0, 0, 1);
-
-  intCamera.position.z = w_height / 4;
-
   return intCamera;
+}
+
+function setCameraView(time = 0) {
+  const rotationSpeedMs = (1/ROTATIONS_PER_SECOND) * 1000;
+  const progressThroughRotation = (time % rotationSpeedMs) / rotationSpeedMs;
+  const rotationInRadians = progressThroughRotation * Math.PI * 2;
+  const baseVerticalRotation = 45;
+  const verticalRotation = baseVerticalRotation + ((1 - w_scroll_perc) * 30);
+
+  camera.rotation.set(0,0,0,0)
+
+  camera.rotateOnWorldAxis(new THREE.Vector3(1, 0, 0), rad(verticalRotation));
+  camera.up = new THREE.Vector3(0, 0, 1);
+
+  // Ensure the box is always positioned properly with reasonable spacing from the top of the screen.
+  // Not too close to the top on widescreen displays, not too far from the top on vertical displays.
+  camera.position.z = Math.min(Math.abs(Math.min(0, (w_height * 0.8) - getTargetDiameter())), w_height / 2)
+
+  camera.rotateOnWorldAxis(new THREE.Vector3(0, 0, 1).normalize(), rotationInRadians);
+
+  setCameraZoom();
+}
+
+function setCameraZoom() {
+  const zoom = 1 + ((1 - w_scroll_perc) * ZOOM_IN_THRESHOLD);
+
+  camera.left   = (w_width  / - 2) / zoom;
+  camera.right  = (w_width  /   2) / zoom;
+  camera.top    = (w_height /   2) / zoom;
+  camera.bottom = (w_height / - 2) / zoom;
+  camera.updateProjectionMatrix();
 }
 
 function setup() {
@@ -246,11 +268,11 @@ function resize() {
   w_width  = window.innerWidth;
   w_height = window.innerHeight;
   
-  camera.left   = w_width  / - 2;
-  camera.right  = w_width  /   2;
-  camera.top    = w_height /   2;
-  camera.bottom = w_height / - 2;
-  camera.updateProjectionMatrix();
+  if (setupDone) {
+    setCameraZoom();
+    scaleObject(sprites);
+    scaleObject(box);
+  }
 
   composer.setSize(w_width, w_height);
   renderer.setSize(w_width, w_height);
@@ -262,7 +284,7 @@ function animate(time = 0) {
   requestAnimationFrame(animate);
   
   /* No animation until we're done loading */
-  if (!loadedAllImages) {
+  if (!loadedAllImages || !setupDone) {
     return;
   }
   
@@ -273,26 +295,9 @@ function animate(time = 0) {
   /* Colour change */
   animateBG(normalisedTime);
 
-  camera.rotateOnWorldAxis(new THREE.Vector3(0, 0.4, 1).normalize(), rad(0.1));
+  setCameraView(time);
 
-  const amount = Math.sin(normalisedTime/10e3 % (Math.PI*2))
-
-  lights.forEach((light, index) => {
-    light.color.setRGB(Math.abs(amount), Math.abs(amount), Math.abs(amount))
-  });
-
-  const { length } = sprites;
-
-  sprites.forEach((sprite, index) => {
-    let count = (((index + 1) / length) * 6) - 3;
-    let timeRadius = (normalisedTime / 2000) + count;
-
-    sprite.position.set(
-      Math.sin(timeRadius) * distributionBound,
-      Math.cos(timeRadius) * distributionBound,
-      Math.min(w_width, w_height) / 4
-    );
-  });
+  sprites.rotateOnAxis(new THREE.Vector3(0, 0, 1), rad(0.5))
 
   render();
 }
@@ -303,13 +308,27 @@ function render() {
 }
 
 function buildScene() {
-  const boxSizingParam = Math.min(w_width, w_height) * 0.9
-  distributionBound = boxSizingParam * 0.3;
-  objects.push(...constructBox(boxSizingParam));
-  lights.push(...constructLights(boxSizingParam));
-  sprites.push(...constructSprites(boxSizingParam));
+  box = constructBox();
+  sprites = constructSprites();
+  lights.push(...constructLights());
+
+  scaleObject(sprites);
+  scaleObject(box);
+
+  scene.add(box, ...lights, sprites);
+}
+
+function scaleObject(object) {
+  const boxTargetDiameter = getTargetDiameter();
+  const percOfUnscaledDiameter = boxTargetDiameter / BASE_BOX_DIAMETER;
   
-  scene.add(...objects, ...lights, ...sprites);
+  object.scale.set(percOfUnscaledDiameter, percOfUnscaledDiameter, percOfUnscaledDiameter);
+}
+
+function getTargetDiameter() {
+  const maxDimension = Math.max(w_width, w_height);
+  const minDimension = Math.min(w_width, w_height);
+  return ((maxDimension + minDimension) / 2) * BASE_BOX_SCALE;
 }
 
 function constructLights() {
@@ -330,11 +349,11 @@ function constructLights() {
   ];
 }
 
-function constructBox(boxSizingParam) {
-  const boxDiameter = boxSizingParam;
+function constructBox() {
+  const boxDiameter = 1000;
   const boxRadius = boxDiameter / 2;
-  const boxHeight = boxSizingParam / 2;
-  const boxThickness = boxSizingParam / 50;
+  const boxHeight = boxDiameter / 2;
+  const boxThickness = boxDiameter / 50;
   const boxInsideDiameter = boxDiameter - (boxThickness * 2);
   const perturbDistance = boxHeight / 10;
   const sandVerticesCount = boxInsideDiameter / 10 | 0;
@@ -387,20 +406,23 @@ function constructBox(boxSizingParam) {
   var sand = new THREE.Mesh(sandGeometry, sandMaterial);
   sand.position.z = perturbDistance;
 
-  return [
+  var box = new THREE.Group()
+  box.add(
     base,
     leftSide,
     rightSide,
     topSide,
     bottomSide,
     sand
-  ];
+  );
+
+  return box;
 }
 
-function constructSprites(boxSizingParam) {
-  const distributionBound = w_width * 0.3;
+function constructSprites() {
+  const distributionBound = BASE_BOX_DIAMETER * 0.3;
   const { length } = buttonMaterials;
-  return buttonMaterials.map((material, index) => {
+  const spriteList = buttonMaterials.map((material, index) => {
     let count = (((index + 1) / length) * 6) - 3;
 
     var sprite = new THREE.Sprite( material );
@@ -409,10 +431,15 @@ function constructSprites(boxSizingParam) {
       Math.cos(count) * distributionBound,
       150
     );
-    sprite.scale.set( boxSizingParam / 5, boxSizingParam / 5, 1.0 );
+    sprite.scale.set( BASE_BOX_DIAMETER / 4, BASE_BOX_DIAMETER / 4, 1.0 );
     
     return sprite;
   });
+
+  const sprites = new THREE.Group();
+  sprites.add(...spriteList);
+
+  return sprites;
 }
 
 
@@ -425,7 +452,7 @@ function constructSprites(boxSizingParam) {
 
 const COLOUR_CYCLE_TIME = 15e3;
 const COLOUR_COMBINATIONS = [
-  ["#FF00FF", "#E1F0F5", "#FF00FF", 270],
+  ["#FF00FF", "#E1F0F5", "#AA00CC", 270],
   ["#E1F0F5", "#F8F7D9", "#43C7DB", 360],
   ["#e7f5e0", "#f8d8d8", "#C3B2E7", 90],
   ["#F8F7D9", "#e7f5e0", "#60DDC5", 180]
