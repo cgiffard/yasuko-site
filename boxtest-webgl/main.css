@@ -253,7 +253,7 @@ main section article > * {
 
 main h2 {
   text-transform: uppercase;
-  color: #999;
+  color: var(--key-color);
   font-weight: bold;
   font-size: 1.5em;
   text-align: center;
@@ -415,12 +415,13 @@ main li {
 .timeline .location {
   float: right;
   font-weight: bold;
+  text-align: right;
 }
 
 .timeline strong {
   position: absolute;
   margin-top: -3em;
-  color: var(--key-color)
+  color: var(--key-color);
 }
 
 footer {
