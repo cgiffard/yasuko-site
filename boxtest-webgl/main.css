@@ -10,6 +10,7 @@ body {
   --foreground-color: #E1F0F5;
   --background-color: #FF00FF;
   --key-color: #FF00FF;
+  --timeline-color: #EEE;
   --hue-rotate: 270deg;
  
   /* Sprite images */
@@ -237,6 +238,17 @@ main section article {
   border-right: 10px solid var(--key-color);
   background-color: white;
   min-height: 33em;
+  
+  /* Default flex */
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* By default, everything takes up the whole container, and there's no visible
+   flex */
+main section article > * {
+  width: 100%;
+  flex: 0 0 100%;
 }
 
 main h2 {
@@ -244,6 +256,7 @@ main h2 {
   color: #999;
   font-weight: bold;
   font-size: 1.5em;
+  text-align: center;
 }
 
 main h3 {
@@ -298,6 +311,116 @@ main a:visited {
 
 main li {
   margin-bottom: 0.5em;
+}
+
+.timeline {
+  list-style-type: none;
+  width: 50%;
+  padding: 0;
+  
+  min-width: 250px;
+  flex: 1;
+  margin-top: 1em;
+  position: relative;
+}
+
+.timeline:nth-of-type(odd) {
+  padding-right: 3em;
+  padding-top: 3em;
+  border-right: solid var(--timeline-color) 2px;
+}
+
+.timeline:nth-of-type(even) {
+  padding-top: 5em;
+  padding-left: 3em;
+  border-left: solid var(--timeline-color) 2px;
+}
+
+.timeline:nth-of-type(even):before,
+.timeline:nth-of-type(even):after {
+  content: "°";
+  font-size: 4em;
+  flex: 0;
+  position: absolute;
+  color: var(--timeline-color);
+  line-height: 10px;
+  margin-left: -0.24em;
+  
+  top: 0px;
+  left: 0px;
+}
+
+.timeline:nth-of-type(even):after {
+  top: auto;
+  bottom: 0px;
+  line-height:40px;
+  background-color: white;
+}
+
+.timeline:nth-of-type(odd):before,
+.timeline:nth-of-type(odd):after {
+  content: "°";
+  font-size: 4em;
+  flex: 0;
+  position: absolute;
+  color: var(--timeline-color);
+  line-height: 10px;
+  margin-right: -0.24em;
+  
+  top: 0px;
+  right: 0px;
+}
+
+.timeline:nth-of-type(odd):after {
+  top: auto;
+  bottom: 0px;
+  line-height:40px;
+  background-color: white;
+}
+
+.timeline li {
+  border: solid #EEE 1px;
+  border-top: solid var(--timeline-color) 4px;
+  padding: 1em;
+  font-size: 0.8em;
+  margin-bottom: 6em;
+}
+
+.timeline li:before {
+  content: " ";
+  display: block;
+  position: absolute;
+  width: 100%;
+  left: 0px;
+  margin-top: calc(-1em + -4px);
+  height: 20px;
+  border-top: solid var(--timeline-color) 4px;
+}
+
+.timeline span[lang] {
+  display: block;
+  overflow: hidden;
+}
+
+.timeline span[lang]:nth-of-type(odd) {
+  padding-bottom: 1em;
+}
+
+.timeline span[lang]:nth-of-type(even) {
+  border-top: dashed var(--timeline-color) 1px;
+  padding-top: 1em;
+  color: #CCC;
+}
+
+.timeline .location {
+  float: right;
+  font-weight: bold;
+}
+
+.timeline strong {
+  position: absolute;
+  margin-top: -3em;
+  color: var(--key-color)
 }
 
 footer {
