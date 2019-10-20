@@ -19,7 +19,13 @@ let setupDone = false;
 
 function scroll() {
   w_scroll = document.documentElement.scrollTop || document.body.scrollTop;
-  w_scroll_perc = Math.max(0, Math.min(1, 1 - ((w_scroll - w_height) / w_height)))
+  w_scroll_perc = Math.max(0, Math.min(1, 1 - ((w_scroll - w_height) / w_height)));
+  
+  if (w_scroll_perc === 1) {
+    document.body.classList.remove("scrolled");
+  } else {
+    document.body.classList.add("scrolled");
+  }
   
   wobblyLineShader.uniforms.colourOpacity.value = w_scroll_perc;
 }
@@ -139,7 +145,7 @@ const wobblyLineShader = new THREE.ShaderPass({
       } else {
         resultPixelColor = vec4(
           boostLuminosity(resultPixelColor.rgb),
-          resultPixelColor.w * colourOpacity * renderOpacity
+          resultPixelColor.w * max(colourOpacity, 0.01) * renderOpacity
         );
       }
       
@@ -260,6 +266,11 @@ function setup() {
   document.body.querySelector("header").appendChild(renderer.domElement);
 
   buildScene();
+  
+  // Browsers seem to optimise out the initial state required to get the fade-in to work using
+  // a CSS transition, so the style is appended after a delay. This is of course not required
+  // with an animation, but then an animation fights with state applied via scrolling.
+  setTimeout(() => document.body.classList.add("setup-done"), 500);
   setupDone = true;
 }
 

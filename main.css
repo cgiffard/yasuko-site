@@ -98,16 +98,6 @@ body > header h1 .lighter {
   }
 }
 
-@keyframes fadeInCanvas {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
 @media(max-width: 699px) {
   body > header h1 {
     font-size: 12vw;
@@ -125,13 +115,17 @@ canvas {
   height: 100vh;
   top: 0px;
   left: 0px;
+  opacity: 0;
+  
+  transition: opacity linear 2s;
 }
 
-.textures-loaded canvas {
-  animation-duration: 5s;
-  animation-name: fadeInCanvas;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
+.textures-loaded.setup-done canvas {
+  opacity: 1;
+}
+
+.textures-loaded.setup-done.scrolled canvas {
+  opacity: 0.05;
 }
 
 main {
@@ -441,7 +435,7 @@ footer {
   font-weight: bold;
   width: 100%;
   margin: 0;
-  margin-bottom: 20vh;
+  margin-bottom: 100vh;
   padding-left: var(--container-padding);
   padding-right: var(--container-padding);
   line-height: 10vw;
