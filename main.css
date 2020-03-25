@@ -305,6 +305,19 @@ main a {
   border-bottom: solid 2px var(--key-color);
 }
 
+.thumbnail {
+  border: solid 1px var(--key-color);
+  padding: 1em;
+}
+
+.thumbnail img {
+  display: block;
+}
+
+.thumbnail:hover {
+  background-color: var(--key-color);
+}
+
 main a:visited {
   color: #999;
   border-bottom-color: #999;
