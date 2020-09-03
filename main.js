@@ -140,16 +140,14 @@ const wobblyLineShader = new THREE.ShaderPass({
       vec4 previousPassColor = texture2D(tDiffuse, coords);
       vec4 resultPixelColor = previousPassColor;
 
-      if (contrast >= contrastThreshold) {
-        resultPixelColor = vec4(lineColor.rgb, renderOpacity);
-      } else {
-        resultPixelColor = vec4(
-          boostLuminosity(resultPixelColor.rgb),
-          resultPixelColor.w * max(colourOpacity, 0.01) * renderOpacity
-        );
-      }
+      float inLine = step(contrastThreshold, contrast);
+      vec4 lineColour = vec4(lineColor.rgb, renderOpacity);
+      vec4 nonLineColour = vec4(
+        boostLuminosity(resultPixelColor.rgb),
+        resultPixelColor.w * max(colourOpacity, 0.01) * renderOpacity
+      );
       
-      gl_FragColor = resultPixelColor;
+      gl_FragColor = mix(nonLineColour, lineColour, inLine);
     }
   `,
 });
