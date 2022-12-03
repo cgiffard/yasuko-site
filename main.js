@@ -28,6 +28,7 @@ function scroll() {
   }
   
   wobblyLineShader.uniforms.colourOpacity.value = w_scroll_perc;
+  wobblyLineShader.uniforms.scrollPosition.value = Math.max(0, w_scroll);
 }
 
 const scene       = new THREE.Scene();
@@ -49,14 +50,15 @@ const wobblyLineShader = new THREE.ShaderPass({
     tDiffuse:          { value: null },
     lineColor:         { value: new THREE.Color(0xffffff) },
     backgroundColor:   { value: new THREE.Color(0xffffff) },
-    foregroundColor:   { value: new THREE.Color(0xffffff) },
+    foregroundColor:   { value: new THREE.Color(0xff0000) },
     contrastThreshold: { value: 0.05 },
     sampleDistance:    { value: 1 },
     viewWidth:         { value: w_width },
     viewHeight:        { value: w_height },
     time:              { value: 0.1 },
     renderOpacity:     { value: 1.0 },
-    colourOpacity:     { value: 1.0 }
+    colourOpacity:     { value: 1.0 },
+    scrollPosition:    { value: 0.0 }
   },
   vertexShader: `
     varying vec2 vUv;
@@ -74,6 +76,7 @@ const wobblyLineShader = new THREE.ShaderPass({
     
     uniform sampler2D tDiffuse;
     uniform vec3 lineColor;
+    uniform vec3 foregroundColor;
     uniform float contrastThreshold;
     uniform float sampleDistance;
 
@@ -84,6 +87,7 @@ const wobblyLineShader = new THREE.ShaderPass({
     // This covers the initial fade-in and fade out when the page is scrolled
     uniform float renderOpacity;
     uniform float colourOpacity;
+    uniform float scrollPosition;
     
     float luminosity(vec3 pixelRGB) {
       vec3 luminosityBias = vec3(0.2125, 0.7154, 0.0721);
@@ -107,6 +111,8 @@ const wobblyLineShader = new THREE.ShaderPass({
       
       float timeSecs = time / 1000.0;
       float wrappedTime = mod(timeSecs, M_PI * 2.0);
+      
+      float isAboveFold = float((vUv.y * viewHeight) < scrollPosition);
 
       vec2 coords = vUv + (sin(vUv * 50.0) * 0.001) + (sin(wrappedTime) * 0.001);
       vec2 coords2 =
@@ -141,13 +147,13 @@ const wobblyLineShader = new THREE.ShaderPass({
       vec4 resultPixelColor = previousPassColor;
 
       float inLine = step(contrastThreshold, contrast);
-      vec4 lineColour = vec4(lineColor.rgb, renderOpacity);
+      vec4 lineColour = vec4(lineColor.rgb, renderOpacity - (isAboveFold * 0.5));
       vec4 nonLineColour = vec4(
         boostLuminosity(resultPixelColor.rgb),
-        resultPixelColor.w * max(colourOpacity, 0.01) * renderOpacity
+        resultPixelColor.w * renderOpacity
       );
       
-      gl_FragColor = mix(nonLineColour, lineColour, inLine);
+      gl_FragColor = mix(mix(nonLineColour, vec4(0.0, 0.0, 0.0, 0.0), isAboveFold), vec4(mix(lineColour.rgb, foregroundColor.rgb, isAboveFold), 1.0 - (isAboveFold * 0.75)), inLine);
     }
   `,
 });
@@ -229,7 +235,7 @@ function setCameraView(time = 0) {
   const progressThroughRotation = (time % rotationSpeedMs) / rotationSpeedMs;
   const rotationInRadians = progressThroughRotation * Math.PI * 2;
   const baseVerticalRotation = 45;
-  const verticalRotation = baseVerticalRotation + ((1 - w_scroll_perc) * 30);
+  const verticalRotation = baseVerticalRotation;
 
   camera.rotation.set(0,0,0,0)
 
@@ -246,7 +252,7 @@ function setCameraView(time = 0) {
 }
 
 function setCameraZoom() {
-  const zoom = 1 + ((1 - w_scroll_perc) * ZOOM_IN_THRESHOLD);
+  const zoom = 1;
 
   camera.left   = (w_width  / - 2) / zoom;
   camera.right  = (w_width  /   2) / zoom;
@@ -261,7 +267,7 @@ function setup() {
   composer.setSize(w_width, w_height);
   composer.setPixelRatio(Math.min(Math.max(window.devicePixelRatio, 2), MAX_DEVICE_PIXEL_RATIO));
   renderer.setPixelRatio(Math.min(Math.max(window.devicePixelRatio, 2), MAX_DEVICE_PIXEL_RATIO));
-  document.body.querySelector("header").appendChild(renderer.domElement);
+  document.body.prepend(renderer.domElement);
 
   buildScene();
   
@@ -560,7 +566,7 @@ function animateBG(time = 0) {
   wobblyLineShader.uniforms.lineColor.value.setRGB(...newLineColour.map((i) => i / 255));
   wobblyLineShader.uniforms.backgroundColor.value.setRGB(...newBackground.map((i) => i / 255));
   wobblyLineShader.uniforms.foregroundColor.value.setRGB(...newForeground.map((i) => i / 255));
-  
+
   // Don't want this to execute too frequently.
   if ((time / 100 | 0) <= lastTime) {
     return;

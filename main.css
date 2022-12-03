@@ -3,110 +3,97 @@
 }
 
 html {
-  font-family: 'Helvetica Neue', sans-serif;
+  font-family: "Helvetica Neue", sans-serif;
 }
 
 body {
-  --foreground-color: #E1F0F5;
-  --background-color: #FF00FF;
-  --key-color: #FF00FF;
-  --timeline-color: #EEE;
+  --foreground-color: #e1f0f5;
+  --background-color: #ff00ff;
+  --key-color: #ff00ff;
+  --timeline-color: #eee;
   --hue-rotate: 270deg;
- 
+
   /* Sprite images */
-  --image-profile:      url("images/sprites/e.gif");
-  --image-work:         url("images/sprites/f.gif");
+  --image-profile: url("images/sprites/e.gif");
+  --image-work: url("images/sprites/f.gif");
   --image-illustration: url("images/sprites/a.gif");
-  --image-line:         url("images/sprites/b.gif");
-  --image-goods:        url("images/sprites/g.gif");
-  --image-blog:         url("images/sprites/c.gif");
-  --image-contact:      url("images/sprites/d.gif");
-  
-  /* Design constants */
-  --border-width: 10px;
-  --container-padding: 5vmax;
-  
+  --image-line: url("images/sprites/b.gif");
+  --image-goods: url("images/sprites/g.gif");
+  --image-blog: url("images/sprites/c.gif");
+  --image-contact: url("images/sprites/d.gif");
+
   -webkit-text-size-adjust: 100%;
-  
+
+  /* Sizing */
+  --big-text-size: calc(max(10vmin, 25px));
+  --medium-text-size: calc(max(5vmin, 20px));
+  --small-text-size: calc(max(2vmin, 12px));
+  --element-padding: calc(min(max(10vmin, 10px), 60px));
+  --element-padding-half: calc(min(max(10vmin, 10px), 60px) / 2);
+
   margin: 0px;
   padding: 0px;
   background-repeat: no-repeat;
   background-size: 100vw 110vmax;
   background-attachment: fixed;
-  background-color: #E1F0F5;
+  background-color: #e1f0f5;
   background-color: var(--foreground-color);
-  background-image: linear-gradient(var(--foreground-color), var(--background-color));
+  background-image: linear-gradient(
+    var(--foreground-color),
+    var(--background-color)
+  );
 }
 
 body > header {
-  text-align: center;
-  width: 100%;
   height: 100vh;
-  
+  padding: var(--element-padding);
+
   display: flex;
-  flex-direction: row;
+  flex-direction: column-reverse;
+  justify-content: flex-start;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
+  align-content: flex-start;
+
+  text-align: right;
+}
+
+body > header > * {
+  width: 100%;
+  flex: 0;
+
+  margin: 0px;
+  padding: 0px;
+  z-index: 10;
 }
 
 body > header h1 {
-  flex: 1;
-  
-  margin: 0px;
-  padding: 0px;
-  width: 100%;
-  z-index: 10;
-  
-  font-weight: lighter;
-  text-transform: lowercase;
-  letter-spacing: 0.4em;
-  font-size: 7vw;
-  /* Making the gap between anaismi and yasoko sit in the middle */
-  text-indent: 0.5em;
-  
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+
+  text-transform: uppercase;
+  font-size: var(--big-text-size);
   color: white;
-  text-shadow: black 0px 0px 100px;
+  text-align: right;
 }
 
-body > header h1 .lighter {
-  text-shadow: white 0px 0px 1px,
-               white 0px 0px 2px,
-               white 0px 0px 3px,
-               white 0px 0px 10px,
-               white 0px 0px 10px;
+body > header p {
+  font-size: var(--small-text-size);
+  font-family: serif;
+  font-style: oblique;
+  line-height: 1.5;
 }
 
-.loaded.textures-loaded h1.texttop {
-  /* Modesty? Who knows. */
-  animation-duration: 7s;
-  animation-name: fadeOutTitle;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
+body > header p span {
+  display: inline-block;
+  background-color: white;
+  color: var(--key-color);
 }
 
-@keyframes fadeOutTitle {
-  from {
-    opacity: 1;
-  }
-  
-  50% {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-  }
-}
-
-@media(max-width: 699px) {
-  body > header h1 {
-    font-size: 12vw;
-  }
-  
-  body > header h1 .lighter {
-    display: inline-block;
-    width: 100vw;
-  }
+header h1 span span {
+  text-align: right;
+  background-color: var(--key-color);
 }
 
 canvas {
@@ -116,7 +103,7 @@ canvas {
   top: 0px;
   left: 0px;
   opacity: 0;
-  
+
   transition: opacity linear 2s;
 }
 
@@ -124,18 +111,154 @@ canvas {
   opacity: 1;
 }
 
-.textures-loaded.setup-done.scrolled canvas {
-  opacity: 0.05;
+nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  justify-content: flex-end;
+
+  position: relative;
+  padding: var(--element-padding-half);
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+nav ul,
+li {
+  list-style: none;
+}
+
+nav ul {
+  margin: 0;
+  padding: 0.2em 0;
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: row;
+  gap: 0.5em;
+}
+
+nav li {
+  display: block;
+  flex: 0;
+}
+
+nav a {
+  display: inline-block;
+  /*   background-color: white; */
+  font-size: var(--small-text-size);
+  color: var(--key-color);
+  text-shadow: 0.1em 0.1em 0px white;
+  text-decoration: none;
+  padding: 0.1em;
+  font-weight: bold;
 }
 
 main {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  justify-content: flex-end;
+
   position: relative;
-  margin: 0px auto;
-  max-width: 60em;
-  z-index: 5;
-  padding-top: var(--container-padding);
-  padding-bottom: var(--container-padding);
+  padding: var(--element-padding-half);
+  background-color: rgba(255, 255, 255, 0.5);
 }
+
+main section {
+  background-color: white;
+  flex: 1;
+  max-width: 700px;
+  padding: var(--element-padding-half);
+  margin: var(--element-padding-half);
+}
+
+main section h1 {
+  color: var(--key-color);
+  font-size: var(--medium-text-size);
+  margin-top: calc(var(--element-padding-half) * -0.5);
+  border-bottom: solid var(--key-color) 3px;
+  text-align: right;
+}
+
+main section img {
+  width: 100%;
+}
+
+img.inset {
+  width: 100%;
+  max-width: 700px;
+  float: left;
+  clear: left;
+  margin-bottom: var(--element-padding-half);
+  margin-right: var(--element-padding-half);
+}
+
+main h2 {
+  text-transform: uppercase;
+  color: var(--key-color);
+  font-weight: bold;
+  font-size: 1.5em;
+  text-align: center;
+}
+
+main h3 {
+  color: var(--key-color);
+  font-size: 1em;
+}
+
+main p,
+main li,
+main dd,
+main dt {
+  line-height: 1.7;
+}
+
+main p + ul,
+main p + ol,
+main p + dl,
+main ul + p,
+main ul + ul,
+main ul + ol,
+main ul + dl,
+main ol + p,
+main ol + ul,
+main ol + ol,
+main ol + dl,
+main dl + p,
+main dl + ul,
+main dl + ol,
+main dl + dl {
+  margin-top: 1.5em;
+}
+
+main p + :not(p, ul, ol, dl),
+main ul + :not(p, ul, ol, dl),
+main ol + :not(p, ul, ol, dl),
+main dl + :not(p, ul, ol, dl) {
+  margin-top: 4em;
+}
+
+iframe {
+  background-color: white;
+  margin-top: 1em;
+  margin-bottom: 3em;
+  border: none;
+}
+
+main a {
+  color: var(--key-color);
+  display: inline-block;
+  padding-bottom: 0.1em;
+  text-decoration: none;
+  border-bottom: solid 2px var(--key-color);
+}
+
+/*
 
 main nav {
   font-size: 4vmin;
@@ -233,13 +356,11 @@ main section article {
   background-color: white;
   min-height: 33em;
   
-  /* Default flex */
+   Default flex
   display: flex;
   flex-wrap: wrap;
 }
 
-/* By default, everything takes up the whole container, and there's no visible
-   flex */
 main section article > * {
   width: 100%;
   flex: 0 0 100%;
@@ -461,3 +582,4 @@ footer {
   
   transform: skewY(-3deg);
 }
+*/
