@@ -120,8 +120,33 @@ nav .name {
     grid-column: span 2;
 }
 
+nav .name:hover {
+    background-image: url("/images/name-bg.gif") !important;
+    background-size: contain;
+}
+
 nav .illustration {
     grid-column: span 2;
+}
+
+nav .illustration:hover a {
+    background-image: url("/images/menu/illustration.gif");
+}
+
+nav .comics:hover a {
+    background-image: url("/images/menu/comics.gif");
+}
+
+nav .animation:hover a {
+    background-image: url("/images/menu/animation.gif");
+}
+
+nav .exhibitions:hover a {
+    background-image: url("/images/menu/exhibitions.gif");
+}
+
+nav .stuffforsale:hover a {
+    background-image: url("/images/menu/stuff-for-sale.gif");
 }
 
 @media (min-width: 1080px) {
