@@ -149,6 +149,14 @@ nav .stuffforsale:hover a {
     background-image: url("/images/menu/stuff-for-sale.gif");
 }
 
+nav .articles:hover a {
+    background-image: url("/images/menu/articles.gif");
+}
+
+nav .linestamps:hover a {
+    background-image: url("/images/menu/linestamps.gif");
+}
+
 @media (min-width: 1080px) {
     nav .articles {
         grid-row: span 2;
