@@ -120,46 +120,66 @@ nav .name {
     grid-column: span 2;
 }
 
-nav .name:hover {
-    background-image: url("/images/name-bg.gif") !important;
-    background-size: contain;
-}
-
-nav .illustration {
+nav .services {
     grid-column: span 2;
 }
 
-nav .illustration:hover a {
-    background-image: url("/images/menu/illustration.gif");
-}
-
-nav .comics:hover a {
-    background-image: url("/images/menu/comics.gif");
+nav .name:hover {
+    background-image: url("/images/name-bg.gif") !important;
+    background-size: contain;
 }
 
 nav .animation:hover a {
     background-image: url("/images/menu/animation.gif");
 }
 
+nav .articles:hover a {
+    background-image: url("/images/menu/articles.gif");
+}
+
+nav .comics:hover a {
+    background-image: url("/images/menu/comics.gif");
+}
+
+nav .contact:hover a {
+    background-image: url("/images/menu/contact.gif");
+}
+
 nav .exhibitions:hover a {
     background-image: url("/images/menu/exhibitions.gif");
 }
 
-nav .stuffforsale:hover a {
-    background-image: url("/images/menu/stuff-for-sale.gif");
-}
-
-nav .articles:hover a {
-    background-image: url("/images/menu/articles.gif");
+nav .illustration:hover a {
+    background-image: url("/images/menu/illustration.gif");
 }
 
 nav .linestamps:hover a {
     background-image: url("/images/menu/linestamps.gif");
 }
 
-@media (min-width: 1080px) {
-    nav .articles {
+nav .services:hover a {
+    background-image: url("/images/menu/services.gif");
+}
+
+nav .stuffforsale:hover a {
+    background-image: url("/images/menu/stuff-for-sale.gif");
+}
+
+@media (min-width: 1400px) {
+    nav .services {
+        grid-column: span 1;
+    }
+}
+
+@media (max-width: 1080px) {
+    nav .illustration {
         grid-row: span 2;
+    }
+}
+
+@media (min-width: 1400px) {
+    nav .illustration {
+        grid-column: span 2;
     }
 }
 
@@ -193,6 +213,9 @@ nav .border a {
 nav .comics a {
     background-image: url("./images/menu/comics.png");
 }
+nav .contact a {
+    background-image: url("./images/menu/contact.png");
+}
 nav .exhibitions a {
     background-image: url("./images/menu/exhibitions.png");
 }
@@ -213,6 +236,9 @@ nav .media a {
 }
 nav .name a {
     background-image: url("./images/menu/name.png");
+}
+nav .services a {
+    background-image: url("./images/menu/services.png");
 }
 nav .stuffforsale a {
     background-image: url("./images/menu/stuff-for-sale.png");
@@ -352,6 +378,13 @@ main section {
 
 article {
     clear: both;
+}
+
+#zines article {
+    padding-bottom: 1em;
+    margin-bottom: 3em;
+    border-bottom: solid #eee 1px;
+    overflow: hidden;
 }
 
 @media (min-width: 720px) {
